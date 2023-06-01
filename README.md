@@ -1,1 +1,2 @@
-# gas-platform-be
+# Ecommnerce Platform
+### Tech stack: NodeJS, Express, JavaScript
