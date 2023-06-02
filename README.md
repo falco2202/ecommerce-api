@@ -1,1 +1,2 @@
-# gas-platform-be
+# Ecommerce Platform
+### Tech stack: NodeJS, Express, JavaScript
