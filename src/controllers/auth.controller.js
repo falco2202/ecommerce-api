@@ -1,14 +1,14 @@
 'use strict'
 
 import AuthService from '../services/auth.service.js'
+import { OKResponse, CreatedResponse } from '../core/success.response.js'
 
 class AuthController {
   signUp = async (req, res, next) => {
-    try {
-      return res.status(201).json(await AuthService.signUp(req.body))
-    } catch (error) {
-      next(error)
-    }
+    new CreatedResponse({
+      message: 'Register successful!',
+      metadata: await AuthService.signUp(req.body)
+    }).send(res)
   }
 }
 
