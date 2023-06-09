@@ -7,5 +7,6 @@ import { asyncHandle } from '../../auth/checkAuth.js'
 const router = express.Router()
 
 router.post('/shop/signup', asyncHandle(authController.signUp))
+router.post('/shop/login', asyncHandle(authController.login))
 
 export default router
