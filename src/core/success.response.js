@@ -37,4 +37,4 @@ class CreatedResponse extends SuccessResponse {
   }
 }
 
-export { OKResponse, CreatedResponse }
+export { OKResponse, CreatedResponse, SuccessResponse }
