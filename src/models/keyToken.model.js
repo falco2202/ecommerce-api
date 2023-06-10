@@ -20,14 +20,6 @@ const keyTokenSchema = new Schema(
     privateKey: {
       type: String,
       required: true
-    },
-    refreshTokensUsed: {
-      type: Array,
-      default: []
-    },
-    refreshToken: {
-      type: String,
-      required: true
     }
   },
   {

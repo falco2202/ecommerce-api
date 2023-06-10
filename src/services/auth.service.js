@@ -37,10 +37,9 @@ class AuthService {
     )
 
     await KeyTokenService.createKeyToken({
-      refreshToken: tokens.refreshToken,
-      privateKey,
+      userId: foundShop._id,
       publicKey,
-      userId: foundShop._id
+      privateKey,
     })
 
     return {
@@ -74,7 +73,7 @@ class AuthService {
       const keyStore = await KeyTokenService.createKeyToken({
         userId: newShop._id,
         publicKey,
-        privateKey
+        privateKey,
       })
 
       if (!keyStore) {
@@ -88,13 +87,11 @@ class AuthService {
       )
 
       return {
-        metadata: {
-          shop: getInfoData({
-            field: ['_id', 'name', 'email'],
-            object: newShop
-          }),
-          tokens
-        }
+        shop: getInfoData({
+          field: ['_id', 'name', 'email'],
+          object: newShop
+        }),
+        tokens
       }
     }
     return {
