@@ -3,13 +3,54 @@
 import bcrypt from 'bcrypt'
 import shopModel from '../models/shop.model.js'
 import { ROLES } from '../constants/shopConstant.js'
-import crypto from 'crypto'
 import KeyTokenService from './keyToken.service.js'
 import { createTokenPair } from '../auth/authUtil.js'
-import { getInfoData } from '../utils/index.js'
-import { BadRequestError } from '../core/error.response.js'
+import { generationTokens, getInfoData } from '../utils/index.js'
+import { AuthFailureError, BadRequestError } from '../core/error.response.js'
+import { findByEmail } from './shop.service.js'
 
 class AuthService {
+  /**
+    1. check email in database
+    2. match password
+    3. create access token and refresh token
+    4. generate tokens
+    5. get data return login
+   */
+  static login = async ({ email, password, refreshToken = null }) => {
+    const foundShop = await findByEmail({ email })
+    if (!foundShop) {
+      throw new BadRequestError('Shop not registered!')
+    }
+
+    const matchPassword = bcrypt.compare(password, foundShop.password)
+    if (!matchPassword) {
+      throw new AuthFailureError('Authentication error!')
+    }
+
+    const { privateKey, publicKey } = generationTokens()
+
+    const tokens = await createTokenPair(
+      { userId: foundShop._id, email },
+      publicKey,
+      privateKey
+    )
+
+    await KeyTokenService.createKeyToken({
+      userId: foundShop._id,
+      publicKey,
+      privateKey,
+    })
+
+    return {
+      shop: getInfoData({
+        field: ['_id', 'name', 'email'],
+        object: foundShop
+      }),
+      tokens
+    }
+  }
+
   static signUp = async ({ name, email, password }) => {
     const isExistShop = await shopModel.findOne({ email }).lean()
 
@@ -27,25 +68,12 @@ class AuthService {
     })
 
     if (newShop) {
-      // const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
-      //   modulusLength: 4096,
-      //   publicKeyEncoding: {
-      //     type: 'pkcs1',
-      //     format: 'pem'
-      //   },
-      //   privatekeyEncoding: {
-      //     type: 'pkcs1',
-      //     format: 'pem'
-      //   }
-      // })
-
-      const privateKey = crypto.randomBytes(64).toString('hex')
-      const publicKey = crypto.randomBytes(64).toString('hex')
+      const { privateKey, publicKey } = generationTokens()
 
       const keyStore = await KeyTokenService.createKeyToken({
         userId: newShop._id,
         publicKey,
-        privateKey
+        privateKey,
       })
 
       if (!keyStore) {
@@ -59,14 +87,11 @@ class AuthService {
       )
 
       return {
-        code: 201,
-        metadata: {
-          shop: getInfoData({
-            field: ['_id', 'name', 'email'],
-            object: newShop
-          }),
-          tokens
-        }
+        shop: getInfoData({
+          field: ['_id', 'name', 'email'],
+          object: newShop
+        }),
+        tokens
       }
     }
     return {
