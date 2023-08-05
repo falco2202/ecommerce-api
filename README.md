@@ -1,2 +1,2 @@
 # Ecommerce Platform
-### Tech stack: NodeJS, Express, JavaScript
+### Tech stack: NodeJS, Express, JavaScript, MongoDB
