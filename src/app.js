@@ -4,7 +4,7 @@ import helmet from 'helmet'
 import compression from 'compression'
 import 'dotenv/config'
 import instanceMongo from './dbs/init.mongodb.js'
-import { countConnect, checkOverload } from './helpers/check.connect.js'
+import { countConnect } from './helpers/check.connect.js'
 import route from './routes/index.js'
 
 const app = express()
@@ -21,7 +21,6 @@ instanceMongo
 
 // check log
 countConnect()
-// checkOverload()
 
 // init routes
 app.use('/', route)
