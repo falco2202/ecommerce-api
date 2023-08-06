@@ -30,16 +30,12 @@ class AuthService {
 
     const { privateKey, publicKey } = generationTokens()
 
-    const tokens = await createTokenPair(
-      { userId: foundShop._id, email },
-      publicKey,
-      privateKey
-    )
+    const tokens = await createTokenPair({ userId: foundShop._id, email }, publicKey, privateKey)
 
     await KeyTokenService.createKeyToken({
       userId: foundShop._id,
       publicKey,
-      privateKey,
+      privateKey
     })
 
     return {
@@ -73,18 +69,14 @@ class AuthService {
       const keyStore = await KeyTokenService.createKeyToken({
         userId: newShop._id,
         publicKey,
-        privateKey,
+        privateKey
       })
 
       if (!keyStore) {
         return { code: 'xxxx', message: 'Key store error!' }
       }
 
-      const tokens = await createTokenPair(
-        { userId: newShop._id, email },
-        publicKey,
-        privateKey
-      )
+      const tokens = await createTokenPair({ userId: newShop._id, email }, publicKey, privateKey)
 
       return {
         shop: getInfoData({
@@ -99,6 +91,8 @@ class AuthService {
       metadata: null
     }
   }
+
+  static logout = ({ email, password, refreshToken = null }) => {}
 }
 
 export default AuthService

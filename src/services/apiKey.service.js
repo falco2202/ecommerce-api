@@ -11,3 +11,4 @@ export const findById = async (key) => {
   const objKey = await apiTokenModel.findOne({ key, status: true }).lean()
   return objKey
 }
+

@@ -9,10 +9,7 @@ class Database {
   }
 
   connect() {
-    if (true) {
-      mongoose.set('debug', true)
-      mongoose.set('debug', { color: true })
-    }
+    mongoose.set('debug', true)
 
     mongoose
       .connect(process.env.MONGO_URL, { maxPoolSize: 50 })
