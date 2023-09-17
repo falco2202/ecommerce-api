@@ -1,6 +1,10 @@
 'use strict'
 
 import jwt from 'jsonwebtoken'
+import { asyncHandle } from '../helpers/asyncHandler.js'
+import { HEADER } from '../constants/headerValue.js'
+import { AuthFailureError } from '../core/error.response.js'
+import KeyTokenService from '../services/keyToken.service.js'
 
 export const createTokenPair = async (payload, publicKey, privateKey) => {
   try {
@@ -23,3 +27,32 @@ export const createTokenPair = async (payload, publicKey, privateKey) => {
     return error
   }
 }
+
+export const authentication = asyncHandle(async (req, res, next) => {
+  const userId = req.headers[HEADER.CLIENT_ID]
+  if (!userId) {
+    throw new AuthFailureError('Invalid request!')
+  }
+
+  const keyStore = await KeyTokenService.findByUserId(userId)
+  if (!keyStore) {
+    throw new NotFoundError('Not found key store!')
+  }
+
+  const accessToken = req.headers[HEADER.AUTHORIZATION]
+  if (!accessToken) {
+    throw new AuthFailureError('Invalid request!')
+  }
+
+  try {
+    const decodeUser = await jwt.verify(accessToken, keyStore.publicKey)
+    if (userId !== decodeUser.userId) {
+      throw new AuthFailureError('Invalid User!')
+    }
+
+    req.keyStore = keyStore
+    return next()
+  } catch (error) {
+    throw error
+  }
+})

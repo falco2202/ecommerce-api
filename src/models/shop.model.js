@@ -1,11 +1,7 @@
 'use strict'
 
 import mongoose, { Schema } from 'mongoose'
-import {
-  DOCUMENT_NAME,
-  COLLECTION_NAME,
-  SHOP_STATUS
-} from '../constants/shopConstant.js'
+import { DOCUMENT_NAME, COLLECTION_NAME, SHOP_STATUS } from '../constants/shopConstant.js'
 
 const shopSchema = new mongoose.Schema(
   {

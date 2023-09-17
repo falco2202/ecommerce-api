@@ -10,13 +10,10 @@ import { AuthFailureError, BadRequestError } from '../core/error.response.js'
 import { findByEmail } from './shop.service.js'
 
 class AuthService {
-  /**
-    1. check email in database
-    2. match password
-    3. create access token and refresh token
-    4. generate tokens
-    5. get data return login
-   */
+  static logout = async (keyStore) => {
+    return await KeyTokenService.removeKeyById(keyStore._id)
+  }
+
   static login = async ({ email, password, refreshToken = null }) => {
     const foundShop = await findByEmail({ email })
     if (!foundShop) {
@@ -30,16 +27,12 @@ class AuthService {
 
     const { privateKey, publicKey } = generationTokens()
 
-    const tokens = await createTokenPair(
-      { userId: foundShop._id, email },
-      publicKey,
-      privateKey
-    )
+    const tokens = await createTokenPair({ userId: foundShop._id, email }, publicKey, privateKey)
 
     await KeyTokenService.createKeyToken({
       userId: foundShop._id,
       publicKey,
-      privateKey,
+      privateKey
     })
 
     return {
@@ -73,18 +66,14 @@ class AuthService {
       const keyStore = await KeyTokenService.createKeyToken({
         userId: newShop._id,
         publicKey,
-        privateKey,
+        privateKey
       })
 
       if (!keyStore) {
         return { code: 'xxxx', message: 'Key store error!' }
       }
 
-      const tokens = await createTokenPair(
-        { userId: newShop._id, email },
-        publicKey,
-        privateKey
-      )
+      const tokens = await createTokenPair({ userId: newShop._id, email }, publicKey, privateKey)
 
       return {
         shop: getInfoData({

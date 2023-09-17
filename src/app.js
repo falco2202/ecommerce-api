@@ -21,7 +21,7 @@ instanceMongo
 
 // check log
 countConnect()
-// checkOverload()
+checkOverload()
 
 // init routes
 app.use('/', route)

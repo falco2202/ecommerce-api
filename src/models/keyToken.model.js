@@ -1,10 +1,7 @@
 'use strict'
 
 import { model, Schema } from 'mongoose'
-import {
-  COLLECTION_NAME,
-  DOCUMENT_NAME
-} from '../constants/keyTokenConstant.js'
+import { COLLECTION_NAME, DOCUMENT_NAME } from '../constants/keyTokenConstant.js'
 
 const keyTokenSchema = new Schema(
   {
